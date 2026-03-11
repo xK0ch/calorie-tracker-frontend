@@ -1,5 +1,5 @@
 services:
-  calorie-tracker:
+  calorie-tracker-frontend:
     build: .
     container_name: calorie-tracker-frontend
     ports:

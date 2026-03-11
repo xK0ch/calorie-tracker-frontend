@@ -9,5 +9,5 @@ RUN npx ng build --configuration=production
 # Stage 2: Serve
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/calorie-tracker/browser /usr/share/nginx/html
+COPY --from=build /app/dist/calorie-tracker-frontend/browser /usr/share/nginx/html
 EXPOSE 443
