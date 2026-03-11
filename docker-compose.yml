@@ -1,0 +1,10 @@
+services:
+  calorie-tracker:
+    build: .
+    container_name: calorie-tracker-frontend
+    ports:
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt/live/fynn-koch.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/fynn-koch.de/privkey.pem:/etc/nginx/ssl/privkey.pem
+    restart: unless-stopped

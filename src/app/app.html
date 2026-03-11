@@ -1,0 +1,44 @@
+<mat-toolbar class="top-nav">
+  <span class="app-title">Kalorientracker</span>
+  <nav class="desktop-nav">
+    <a mat-button routerLink="/calendar" routerLinkActive="active-link">
+      <mat-icon>calendar_month</mat-icon>
+      Kalender
+    </a>
+    <a mat-button routerLink="/ingredients" routerLinkActive="active-link">
+      <mat-icon>egg</mat-icon>
+      Zutaten
+    </a>
+    <a mat-button routerLink="/meals" routerLinkActive="active-link">
+      <mat-icon>lunch_dining</mat-icon>
+      Gerichte
+    </a>
+    <a mat-button routerLink="/settings" routerLinkActive="active-link">
+      <mat-icon>settings</mat-icon>
+      Einstellungen
+    </a>
+  </nav>
+</mat-toolbar>
+
+<main class="content">
+  <router-outlet />
+</main>
+
+<nav class="mobile-nav">
+  <a routerLink="/calendar" routerLinkActive="active-link">
+    <mat-icon>calendar_month</mat-icon>
+    <span>Kalender</span>
+  </a>
+  <a routerLink="/ingredients" routerLinkActive="active-link">
+    <mat-icon>egg</mat-icon>
+    <span>Zutaten</span>
+  </a>
+  <a routerLink="/meals" routerLinkActive="active-link">
+    <mat-icon>lunch_dining</mat-icon>
+    <span>Gerichte</span>
+  </a>
+  <a routerLink="/settings" routerLinkActive="active-link">
+    <mat-icon>settings</mat-icon>
+    <span>Einstellungen</span>
+  </a>
+</nav>

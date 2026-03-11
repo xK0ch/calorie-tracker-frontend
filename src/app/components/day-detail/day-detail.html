@@ -1,0 +1,79 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>{{ formattedDate() }}</h1>
+  </div>
+
+  <mat-card class="summary-card" [class.under-goal]="isUnderGoal()" [class.over-goal]="isOverGoal()">
+    <mat-card-header>
+      <mat-card-title>Tagesübersicht</mat-card-title>
+      <mat-card-subtitle>Ziel: {{ calorieGoal() }} kcal</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="macros-grid">
+        <div class="macro-item">
+          <span class="macro-value" [class.under-goal-text]="isUnderGoal()" [class.over-goal-text]="isOverGoal()">
+            {{ dayMacros().calories | number:'1.0-0' }}
+          </span>
+          <span class="macro-label">kcal</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-value">{{ dayMacros().fat | number:'1.1-1' }}</span>
+          <span class="macro-label">Fett (g)</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-value">{{ dayMacros().protein | number:'1.1-1' }}</span>
+          <span class="macro-label">Eiweiß (g)</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-value">{{ dayMacros().carbs | number:'1.1-1' }}</span>
+          <span class="macro-label">KH (g)</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (availableMeals().length > 0) {
+    <div class="add-meal-section">
+      <mat-form-field class="full-width">
+        <mat-label>Gericht hinzufügen</mat-label>
+        <mat-select #mealSelect (selectionChange)="addMeal($event.value); mealSelect.value = ''">
+          @for (meal of availableMeals(); track meal.id) {
+            <mat-option [value]="meal.id">{{ meal.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  } @else {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon>info</mat-icon>
+        <p>Erstelle zuerst Gerichte, um sie einem Tag hinzuzufügen.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (dayEntry().mealIds.length > 0) {
+    <h2>Gerichte an diesem Tag</h2>
+    <mat-card>
+      <mat-list>
+        @for (mealId of dayEntry().mealIds; track $index) {
+          <mat-list-item>
+            <span matListItemTitle>{{ getMealName(mealId) }}</span>
+            <span matListItemLine>
+              {{ getMealMacros(mealId).calories | number:'1.0-0' }} kcal |
+              F: {{ getMealMacros(mealId).fat | number:'1.1-1' }}g |
+              E: {{ getMealMacros(mealId).protein | number:'1.1-1' }}g |
+              KH: {{ getMealMacros(mealId).carbs | number:'1.1-1' }}g
+            </span>
+            <button matListItemMeta mat-icon-button color="warn" (click)="removeMeal($index)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        }
+      </mat-list>
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,140 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Gerichte</h1>
+    <button mat-fab extended (click)="openAddForm()" [disabled]="ingredients().length === 0">
+      <mat-icon>add</mat-icon>
+      Gericht erstellen
+    </button>
+  </div>
+
+  @if (ingredients().length === 0) {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon>info</mat-icon>
+        <p>Erstelle zuerst Zutaten, bevor du Gerichte anlegen kannst.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ editingId() ? 'Gericht bearbeiten' : 'Neues Gericht' }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field class="full-width">
+          <mat-label>Gerichtsname</mat-label>
+          <input matInput [value]="mealName()" (input)="mealName.set($any($event.target).value)">
+        </mat-form-field>
+
+        <h3>Zutaten</h3>
+
+        <div class="ingredient-selector">
+          <mat-form-field>
+            <mat-label>Zutat hinzufügen</mat-label>
+            <mat-select #ingredientSelect (selectionChange)="addIngredientToMeal($event.value); ingredientSelect.value = ''">
+              @for (ingredient of ingredients(); track ingredient.id) {
+                <mat-option [value]="ingredient.id">{{ ingredient.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @for (mi of mealIngredients(); track $index) {
+          <div class="ingredient-row">
+            <span class="ingredient-name">{{ getIngredientName(mi.ingredientId) }}</span>
+            <mat-form-field class="amount-field">
+              <mat-label>Gramm</mat-label>
+              <input matInput type="number" [value]="mi.amount" (input)="updateIngredientAmount($index, $any($event.target).value)">
+            </mat-form-field>
+            <button mat-icon-button color="warn" (click)="removeIngredientFromMeal($index)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+
+        @if (mealIngredients().length > 0) {
+          <div class="macros-preview">
+            <h4>Nährwerte gesamt:</h4>
+            <div class="macros-grid">
+              <div class="macro-item">
+                <span class="macro-value">{{ currentMacros().calories | number:'1.0-0' }}</span>
+                <span class="macro-label">kcal</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ currentMacros().fat | number:'1.1-1' }}</span>
+                <span class="macro-label">Fett (g)</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ currentMacros().protein | number:'1.1-1' }}</span>
+                <span class="macro-label">Eiweiß (g)</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ currentMacros().carbs | number:'1.1-1' }}</span>
+                <span class="macro-label">KH (g)</span>
+              </div>
+            </div>
+          </div>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="cancel()">Abbrechen</button>
+        <button mat-flat-button (click)="save()">Speichern</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (meals().length > 0) {
+    <div class="meals-grid">
+      @for (meal of meals(); track meal.id) {
+        <mat-card class="meal-card">
+          <mat-card-header>
+            <mat-card-title>{{ meal.name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="meal-ingredients">
+              @for (mi of meal.ingredients; track $index) {
+                <mat-chip-set>
+                  <mat-chip>{{ getIngredientName(mi.ingredientId) }} – {{ mi.amount }}g</mat-chip>
+                </mat-chip-set>
+              }
+            </div>
+            <div class="macros-grid">
+              <div class="macro-item">
+                <span class="macro-value">{{ getMealMacros(meal).calories | number:'1.0-0' }}</span>
+                <span class="macro-label">kcal</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ getMealMacros(meal).fat | number:'1.1-1' }}</span>
+                <span class="macro-label">Fett</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ getMealMacros(meal).protein | number:'1.1-1' }}</span>
+                <span class="macro-label">Eiweiß</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ getMealMacros(meal).carbs | number:'1.1-1' }}</span>
+                <span class="macro-label">KH</span>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-button (click)="openEditForm(meal)">
+              <mat-icon>edit</mat-icon> Bearbeiten
+            </button>
+            <button mat-button color="warn" (click)="delete(meal.id)">
+              <mat-icon>delete</mat-icon> Löschen
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  } @else if (ingredients().length > 0) {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon>lunch_dining</mat-icon>
+        <p>Noch keine Gerichte vorhanden. Erstelle dein erstes Gericht!</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

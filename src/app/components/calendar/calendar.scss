@@ -1,0 +1,133 @@
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    min-width: 220px;
+    text-align: center;
+  }
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.weekday-header {
+  text-align: center;
+  font-weight: 600;
+  padding: 8px 4px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: var(--mat-sys-surface-container-low);
+  padding: 4px;
+  min-height: 60px;
+
+  &:hover:not(.empty) {
+    background: var(--mat-sys-surface-container-high);
+  }
+
+  &.empty {
+    cursor: default;
+    background: transparent;
+  }
+
+  &.today {
+    outline: 2px solid var(--mat-sys-primary);
+  }
+
+  &.under-goal {
+    background: #c8e6c9;
+
+    &:hover {
+      background: #a5d6a7;
+    }
+  }
+
+  &.over-goal {
+    background: #ffcdd2;
+
+    &:hover {
+      background: #ef9a9a;
+    }
+  }
+
+  .day-number {
+    font-weight: 500;
+    font-size: 16px;
+  }
+
+  .day-calories {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+
+  &.under-goal {
+    background: #c8e6c9;
+  }
+
+  &.over-goal {
+    background: #ffcdd2;
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-day {
+    min-height: 44px;
+    aspect-ratio: auto;
+
+    .day-calories {
+      font-size: 9px;
+    }
+
+    .day-number {
+      font-size: 14px;
+    }
+  }
+}

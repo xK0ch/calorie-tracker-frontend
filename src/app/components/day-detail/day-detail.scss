@@ -1,0 +1,105 @@
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 500;
+  }
+}
+
+.summary-card {
+  margin-bottom: 24px;
+  transition: background 0.3s;
+
+  &.under-goal {
+    background: #e8f5e9;
+  }
+
+  &.over-goal {
+    background: #ffebee;
+  }
+}
+
+.macros-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  text-align: center;
+  padding-top: 16px;
+}
+
+.macro-item {
+  display: flex;
+  flex-direction: column;
+
+  .macro-value {
+    font-size: 28px;
+    font-weight: 700;
+
+    &.under-goal-text {
+      color: #2e7d32;
+    }
+
+    &.over-goal-text {
+      color: #c62828;
+    }
+  }
+
+  .macro-label {
+    font-size: 13px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+}
+
+.add-meal-section {
+  margin-bottom: 24px;
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  margin-bottom: 24px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 600px) {
+  .macros-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .macro-item .macro-value {
+    font-size: 22px;
+  }
+}

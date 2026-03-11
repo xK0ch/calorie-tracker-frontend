@@ -1,0 +1,133 @@
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+  }
+}
+
+.form-card {
+  margin-bottom: 24px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  mat-card-content {
+    padding-top: 16px;
+  }
+
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px;
+  }
+}
+
+.ingredient-selector {
+  margin-bottom: 8px;
+}
+
+.ingredient-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+
+  .ingredient-name {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .amount-field {
+    width: 120px;
+  }
+}
+
+.macros-preview {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--mat-sys-surface-container);
+  border-radius: 12px;
+
+  h4 {
+    margin: 0 0 12px 0;
+  }
+}
+
+.macros-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.macro-item {
+  display: flex;
+  flex-direction: column;
+
+  .macro-value {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .macro-label {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+}
+
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.meal-card {
+  .meal-ingredients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+
+  .macros-grid {
+    margin-top: 8px;
+  }
+
+  mat-card-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+}

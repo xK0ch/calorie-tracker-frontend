@@ -1,0 +1,112 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Zutaten</h1>
+    <button mat-fab extended (click)="openAddForm()">
+      <mat-icon>add</mat-icon>
+      Zutat hinzufügen
+    </button>
+  </div>
+
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ editingId() ? 'Zutat bearbeiten' : 'Neue Zutat' }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-grid">
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput [value]="formData().name" (input)="updateField('name', $any($event.target).value)">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Referenzmenge (g)</mat-label>
+            <input matInput type="number" [value]="formData().referenceAmount" (input)="updateField('referenceAmount', $any($event.target).value)">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Kalorien (kcal)</mat-label>
+            <input matInput type="number" [value]="formData().calories" (input)="updateField('calories', $any($event.target).value)">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Fett (g)</mat-label>
+            <input matInput type="number" [value]="formData().fat" (input)="updateField('fat', $any($event.target).value)">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Eiweiß (g)</mat-label>
+            <input matInput type="number" [value]="formData().protein" (input)="updateField('protein', $any($event.target).value)">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Kohlenhydrate (g)</mat-label>
+            <input matInput type="number" [value]="formData().carbs" (input)="updateField('carbs', $any($event.target).value)">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="cancel()">Abbrechen</button>
+        <button mat-flat-button (click)="save()">Speichern</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (ingredients().length > 0) {
+    <div class="table-container">
+      <table mat-table [dataSource]="ingredients()">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="referenceAmount">
+          <th mat-header-cell *matHeaderCellDef>Menge (g)</th>
+          <td mat-cell *matCellDef="let item">{{ item.referenceAmount }}g</td>
+        </ng-container>
+
+        <ng-container matColumnDef="calories">
+          <th mat-header-cell *matHeaderCellDef>kcal</th>
+          <td mat-cell *matCellDef="let item">{{ item.calories }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fat">
+          <th mat-header-cell *matHeaderCellDef>Fett (g)</th>
+          <td mat-cell *matCellDef="let item">{{ item.fat }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="protein">
+          <th mat-header-cell *matHeaderCellDef>Eiweiß (g)</th>
+          <td mat-cell *matCellDef="let item">{{ item.protein }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="carbs">
+          <th mat-header-cell *matHeaderCellDef>KH (g)</th>
+          <td mat-cell *matCellDef="let item">{{ item.carbs }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button (click)="openEditForm(item)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="delete(item.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  } @else {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon>restaurant</mat-icon>
+        <p>Noch keine Zutaten vorhanden. Erstelle deine erste Zutat!</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

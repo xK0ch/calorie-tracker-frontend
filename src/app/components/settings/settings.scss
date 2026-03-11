@@ -1,0 +1,25 @@
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-card-content {
+  padding-top: 16px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+}

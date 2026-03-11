@@ -1,0 +1,41 @@
+<div class="page-container">
+  <div class="calendar-header">
+    <button mat-icon-button (click)="previousMonth()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <h1>{{ monthName() }}</h1>
+    <button mat-icon-button (click)="nextMonth()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="calendar-grid">
+    @for (day of weekDays; track day) {
+      <div class="weekday-header">{{ day }}</div>
+    }
+
+    @for (day of calendarDays(); track $index) {
+      @if (day) {
+        <div class="calendar-day" [class.today]="day.isToday" [class]="getCalorieClass(day.macros.calories)" (click)="openDay(day.date)">
+          <span class="day-number">{{ day.day }}</span>
+          @if (day.macros.calories > 0) {
+            <span class="day-calories">{{ day.macros.calories | number:'1.0-0' }} kcal</span>
+          }
+        </div>
+      } @else {
+        <div class="calendar-day empty"></div>
+      }
+    }
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <span class="legend-dot under-goal"></span>
+      <span>Unter Kalorienziel ({{ calorieGoal() }} kcal)</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot over-goal"></span>
+      <span>Über Kalorienziel</span>
+    </div>
+  </div>
+</div>
