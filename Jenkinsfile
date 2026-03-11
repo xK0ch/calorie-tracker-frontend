@@ -22,7 +22,7 @@ pipeline {
       steps {
         sh 'docker compose -f docker-compose-calorie-tracker-frontend.yml down'
         sh 'docker image prune -af'
-        sh 'docker compose -f ddocker-compose-calorie-tracker-frontend.yml up --build -d'
+        sh 'docker compose -f docker-compose-calorie-tracker-frontend.yml up --build -d'
       }
     }
   }
