@@ -5,6 +5,6 @@ services:
     ports:
       - "443:443"
     volumes:
-      - /etc/letsencrypt/live/fynn-koch.de/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      - /etc/letsencrypt/live/fynn-koch.de/privkey.pem:/etc/nginx/ssl/privkey.pem
+      - /etc/letsencrypt/live/fynn-koch.de-0001/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/fynn-koch.de-0001/privkey.pem:/etc/nginx/ssl/privkey.pem
     restart: unless-stopped
