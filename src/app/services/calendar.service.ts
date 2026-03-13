@@ -1,53 +1,89 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { DayEntry } from '../models/day-entry.model';
 import { Macros } from '../models/macros.model';
 import { MealService } from './meal.service';
-
-const STORAGE_KEY = 'ct_calendar';
+import { ProfileService } from './profile.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
+  private readonly http = inject(HttpClient);
   private readonly mealService = inject(MealService);
-  private readonly entriesSignal = signal<DayEntry[]>(this.load());
+  private readonly profileService = inject(ProfileService);
+  private readonly entriesSignal = signal<DayEntry[]>([]);
 
   readonly entries = this.entriesSignal.asReadonly();
 
-  private load(): DayEntry[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  constructor() {
+    effect(() => {
+      const profileId = this.profileService.activeProfileId();
+      if (profileId) {
+        this.loadCurrentMonth();
+      } else {
+        this.entriesSignal.set([]);
+      }
+    });
   }
 
-  private save(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.entriesSignal()));
+  loadCurrentMonth(): void {
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    const now = new Date();
+    const from = new Date(now.getFullYear(), now.getMonth(), 1);
+    const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    this.loadDateRange(profileId, this.formatDate(from), this.formatDate(to));
+  }
+
+  loadMonth(year: number, month: number): void {
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    const from = new Date(year, month, 1);
+    const to = new Date(year, month + 1, 0);
+    this.loadDateRange(profileId, this.formatDate(from), this.formatDate(to));
+  }
+
+  private loadDateRange(profileId: number, from: string, to: string): void {
+    this.http.get<DayEntry[]>(`${environment.apiUrl}/profiles/${profileId}/days`, {
+      params: { from, to }
+    }).subscribe(entries => this.entriesSignal.set(entries));
   }
 
   getEntry(date: string): DayEntry {
     return this.entriesSignal().find(e => e.date === date) ?? { date, mealIds: [] };
   }
 
-  addMealToDay(date: string, mealId: string): void {
-    this.entriesSignal.update(entries => {
-      const existing = entries.find(e => e.date === date);
-      if (existing) {
-        return entries.map(e =>
-          e.date === date ? { ...e, mealIds: [...e.mealIds, mealId] } : e
-        );
-      }
-      return [...entries, { date, mealIds: [mealId] }];
-    });
-    this.save();
+  addMealToDay(date: string, mealId: number): void {
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    this.http.post<DayEntry>(`${environment.apiUrl}/profiles/${profileId}/days/${date}/meals`, { mealId })
+      .subscribe(entry => {
+        this.entriesSignal.update(entries => {
+          const existing = entries.find(e => e.date === date);
+          if (existing) {
+            return entries.map(e => e.date === date ? entry : e);
+          }
+          return [...entries, entry];
+        });
+      });
   }
 
   removeMealFromDay(date: string, index: number): void {
-    this.entriesSignal.update(entries =>
-      entries.map(e => {
-        if (e.date !== date) return e;
-        const mealIds = [...e.mealIds];
-        mealIds.splice(index, 1);
-        return { ...e, mealIds };
-      }).filter(e => e.mealIds.length > 0)
-    );
-    this.save();
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    this.http.delete<void>(`${environment.apiUrl}/profiles/${profileId}/days/${date}/meals/${index}`)
+      .subscribe(() => {
+        this.entriesSignal.update(entries => {
+          const entry = entries.find(e => e.date === date);
+          if (!entry) return entries;
+          const mealIds = [...entry.mealIds];
+          mealIds.splice(index, 1);
+          if (mealIds.length === 0) {
+            return entries.filter(e => e.date !== date);
+          }
+          return entries.map(e => e.date === date ? { ...e, mealIds } : e);
+        });
+      });
   }
 
   getDayMacros(date: string): Macros {
@@ -64,5 +100,12 @@ export class CalendarService {
       }
     }
     return macros;
+  }
+
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 }

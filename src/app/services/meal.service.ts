@@ -1,46 +1,61 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, effect } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Meal } from '../models/meal.model';
 import { Macros } from '../models/macros.model';
 import { IngredientService } from './ingredient.service';
-
-const STORAGE_KEY = 'ct_meals';
+import { ProfileService } from './profile.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MealService {
+  private readonly http = inject(HttpClient);
   private readonly ingredientService = inject(IngredientService);
-  private readonly mealsSignal = signal<Meal[]>(this.load());
+  private readonly profileService = inject(ProfileService);
+  private readonly mealsSignal = signal<Meal[]>([]);
 
   readonly meals = this.mealsSignal.asReadonly();
 
-  private load(): Meal[] {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  constructor() {
+    effect(() => {
+      const profileId = this.profileService.activeProfileId();
+      if (profileId) {
+        this.loadAll(profileId);
+      } else {
+        this.mealsSignal.set([]);
+      }
+    });
   }
 
-  private save(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.mealsSignal()));
+  private loadAll(profileId: number): void {
+    this.http.get<Meal[]>(`${environment.apiUrl}/profiles/${profileId}/meals`)
+      .subscribe(list => this.mealsSignal.set(list));
   }
 
-  getById(id: string): Meal | undefined {
+  getById(id: number): Meal | undefined {
     return this.mealsSignal().find(m => m.id === id);
   }
 
   add(meal: Omit<Meal, 'id'>): void {
-    const newMeal: Meal = { ...meal, id: crypto.randomUUID() };
-    this.mealsSignal.update(list => [...list, newMeal]);
-    this.save();
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    this.http.post<Meal>(`${environment.apiUrl}/profiles/${profileId}/meals`, meal)
+      .subscribe(saved => this.mealsSignal.update(list => [...list, saved]));
   }
 
   update(meal: Meal): void {
-    this.mealsSignal.update(list =>
-      list.map(m => (m.id === meal.id ? meal : m))
-    );
-    this.save();
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    this.http.put<Meal>(`${environment.apiUrl}/profiles/${profileId}/meals/${meal.id}`, meal)
+      .subscribe(saved => this.mealsSignal.update(list =>
+        list.map(m => m.id === saved.id ? saved : m)
+      ));
   }
 
-  delete(id: string): void {
-    this.mealsSignal.update(list => list.filter(m => m.id !== id));
-    this.save();
+  delete(id: number): void {
+    const profileId = this.profileService.activeProfileId();
+    if (!profileId) return;
+    this.http.delete<void>(`${environment.apiUrl}/profiles/${profileId}/meals/${id}`)
+      .subscribe(() => this.mealsSignal.update(list => list.filter(m => m.id !== id)));
   }
 
   calculateMealMacros(meal: Meal): Macros {

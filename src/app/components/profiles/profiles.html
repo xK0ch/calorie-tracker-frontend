@@ -1,0 +1,76 @@
+<div class="page-container">
+  <h1>Profile</h1>
+
+  <mat-card class="create-card">
+    <mat-card-header>
+      <mat-card-title>Neues Profil erstellen</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="create-form">
+        <mat-form-field class="name-field">
+          <mat-label>Name</mat-label>
+          <input matInput [value]="newName()" (input)="newName.set($any($event.target).value)"
+                 (keyup.enter)="createProfile()">
+        </mat-form-field>
+        <button mat-flat-button (click)="createProfile()">
+          <mat-icon>person_add</mat-icon>
+          Erstellen
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (profiles().length > 0) {
+    <h2>Vorhandene Profile</h2>
+    <div class="profiles-list">
+      @for (profile of profiles(); track profile.id) {
+        <mat-card class="profile-card" [class.active]="profile.id === activeProfileId()">
+          @if (editingId() === profile.id) {
+            <mat-card-content>
+              <div class="edit-form">
+                <mat-form-field class="name-field">
+                  <mat-label>Name</mat-label>
+                  <input matInput [value]="editName()" (input)="editName.set($any($event.target).value)"
+                         (keyup.enter)="saveEdit()">
+                </mat-form-field>
+                <button mat-icon-button (click)="saveEdit()">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button (click)="cancelEdit()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          } @else {
+            <mat-card-content class="profile-content" (click)="selectProfile(profile.id)">
+              <div class="profile-info">
+                <mat-icon>person</mat-icon>
+                <span class="profile-name">{{ profile.name }}</span>
+                @if (profile.id === activeProfileId()) {
+                  <mat-chip-set>
+                    <mat-chip highlighted>Aktiv</mat-chip>
+                  </mat-chip-set>
+                }
+              </div>
+              <div class="profile-actions" (click)="$event.stopPropagation()">
+                <button mat-icon-button (click)="startEdit(profile)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteProfile(profile.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          }
+        </mat-card>
+      }
+    </div>
+  } @else {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon>person_add</mat-icon>
+        <p>Noch keine Profile vorhanden. Erstelle dein erstes Profil!</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

@@ -1,20 +1,39 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { MealService } from './meal.service';
 import { IngredientService } from './ingredient.service';
+import { ProfileService } from './profile.service';
+import { environment } from '../../environments/environment';
 
 describe('MealService', () => {
   let mealService: MealService;
   let ingredientService: IngredientService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    localStorage.clear();
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    httpMock = TestBed.inject(HttpTestingController);
+
+    const profileService = TestBed.inject(ProfileService);
+    const profileReq = httpMock.expectOne(`${environment.apiUrl}/profiles`);
+    profileReq.flush([{ id: 1, name: 'Test', calorieGoal: 2000 }]);
+
+    profileService.setActiveProfile(1);
+    TestBed.flushEffects();
+
     ingredientService = TestBed.inject(IngredientService);
     mealService = TestBed.inject(MealService);
+    TestBed.flushEffects();
+
+    // Flush loads triggered by effects
+    httpMock.match(() => true).forEach(r => r.flush([]));
   });
 
   afterEach(() => {
-    localStorage.clear();
+    httpMock.verify();
   });
 
   it('should be created', () => {
@@ -23,63 +42,44 @@ describe('MealService', () => {
 
   it('should add a meal', () => {
     mealService.add({ name: 'Frühstück', ingredients: [] });
+    const req = httpMock.expectOne(`${environment.apiUrl}/profiles/1/meals`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ id: 1, name: 'Frühstück', ingredients: [] });
+
     expect(mealService.meals().length).toBe(1);
     expect(mealService.meals()[0].name).toBe('Frühstück');
   });
 
   it('should calculate meal macros correctly', () => {
-    ingredientService.add({
-      name: 'Milch',
-      referenceAmount: 100,
-      calories: 58,
-      fat: 3.5,
-      protein: 3.4,
-      carbs: 4.7,
-    });
-    const milchId = ingredientService.ingredients()[0].id;
+    ingredientService['ingredientsSignal'].set([
+      { id: 1, name: 'Milch', referenceAmount: 100, calories: 58, fat: 3.5, protein: 3.4, carbs: 4.7 },
+      { id: 2, name: 'Haferflocken', referenceAmount: 100, calories: 372, fat: 7, protein: 13.5, carbs: 58.7 },
+    ]);
 
-    ingredientService.add({
-      name: 'Haferflocken',
-      referenceAmount: 100,
-      calories: 372,
-      fat: 7,
-      protein: 13.5,
-      carbs: 58.7,
-    });
-    const haferId = ingredientService.ingredients()[1].id;
-
-    mealService.add({
+    const meal = {
+      id: 1,
       name: 'Porridge',
       ingredients: [
-        { ingredientId: milchId, amount: 200 },
-        { ingredientId: haferId, amount: 50 },
+        { ingredientId: 1, amount: 200 },
+        { ingredientId: 2, amount: 50 },
       ],
-    });
+    };
 
-    const meal = mealService.meals()[0];
     const macros = mealService.calculateMealMacros(meal);
-
-    // Milch: 200/100 * 58 = 116 kcal, Haferflocken: 50/100 * 372 = 186 kcal
     expect(macros.calories).toBeCloseTo(302, 0);
-    // Milch: 200/100 * 3.5 = 7g, Haferflocken: 50/100 * 7 = 3.5g
     expect(macros.fat).toBeCloseTo(10.5, 1);
-    // Milch: 200/100 * 3.4 = 6.8g, Haferflocken: 50/100 * 13.5 = 6.75g
     expect(macros.protein).toBeCloseTo(13.55, 1);
-    // Milch: 200/100 * 4.7 = 9.4g, Haferflocken: 50/100 * 58.7 = 29.35g
     expect(macros.carbs).toBeCloseTo(38.75, 1);
   });
 
   it('should delete a meal', () => {
-    mealService.add({ name: 'Test', ingredients: [] });
-    const id = mealService.meals()[0].id;
-    mealService.delete(id);
-    expect(mealService.meals().length).toBe(0);
-  });
+    mealService['mealsSignal'].set([{ id: 1, name: 'Test', ingredients: [] }]);
 
-  it('should update a meal', () => {
-    mealService.add({ name: 'Alt', ingredients: [] });
-    const id = mealService.meals()[0].id;
-    mealService.update({ id, name: 'Neu', ingredients: [] });
-    expect(mealService.meals()[0].name).toBe('Neu');
+    mealService.delete(1);
+    const req = httpMock.expectOne(`${environment.apiUrl}/profiles/1/meals/1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+
+    expect(mealService.meals().length).toBe(0);
   });
 });

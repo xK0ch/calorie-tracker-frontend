@@ -69,6 +69,7 @@ export class Calendar {
     } else {
       this.currentMonth.update(m => m - 1);
     }
+    this.calendarService.loadMonth(this.currentYear(), this.currentMonth());
   }
 
   nextMonth(): void {
@@ -78,6 +79,7 @@ export class Calendar {
     } else {
       this.currentMonth.update(m => m + 1);
     }
+    this.calendarService.loadMonth(this.currentYear(), this.currentMonth());
   }
 
   openDay(date: string): void {

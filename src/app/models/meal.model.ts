@@ -1,10 +1,10 @@
 export interface MealIngredient {
-  ingredientId: string;
+  ingredientId: number;
   amount: number;
 }
 
 export interface Meal {
-  id: string;
+  id: number;
   name: string;
   ingredients: MealIngredient[];
 }

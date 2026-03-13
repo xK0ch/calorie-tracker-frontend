@@ -1,4 +1,4 @@
 export interface DayEntry {
   date: string;
-  mealIds: string[];
+  mealIds: number[];
 }

@@ -28,7 +28,7 @@ export class Ingredients {
   readonly ingredients = this.ingredientService.ingredients;
 
   readonly showForm = signal(false);
-  readonly editingId = signal<string | null>(null);
+  readonly editingId = signal<number | null>(null);
 
   readonly formData = signal({
     name: '',
@@ -77,7 +77,7 @@ export class Ingredients {
     this.showForm.set(false);
   }
 
-  delete(id: string): void {
+  delete(id: number): void {
     this.ingredientService.delete(id);
   }
 

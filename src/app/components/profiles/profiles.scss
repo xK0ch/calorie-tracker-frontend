@@ -1,0 +1,93 @@
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 24px 0 12px;
+  }
+}
+
+.create-card {
+  margin-bottom: 16px;
+
+  mat-card-content {
+    padding-top: 16px;
+  }
+}
+
+.create-form, .edit-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .name-field {
+    flex: 1;
+  }
+}
+
+.profiles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-card {
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-high);
+  }
+
+  &.active {
+    outline: 2px solid var(--mat-sys-primary);
+  }
+}
+
+.profile-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .profile-name {
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+.profile-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+}

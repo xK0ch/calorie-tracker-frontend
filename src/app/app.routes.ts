@@ -7,4 +7,5 @@ export const routes: Routes = [
   { path: 'ingredients', loadComponent: () => import('./components/ingredients/ingredients').then(m => m.Ingredients) },
   { path: 'meals', loadComponent: () => import('./components/meals/meals').then(m => m.Meals) },
   { path: 'settings', loadComponent: () => import('./components/settings/settings').then(m => m.Settings) },
+  { path: 'profiles', loadComponent: () => import('./components/profiles/profiles').then(m => m.Profiles) },
 ];

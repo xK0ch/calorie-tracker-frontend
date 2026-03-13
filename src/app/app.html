@@ -1,5 +1,20 @@
 <mat-toolbar class="top-nav">
   <span class="app-title">Kalorientracker</span>
+  <div class="profile-selector">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-select
+        [value]="profileService.activeProfileId()"
+        (selectionChange)="profileService.setActiveProfile($event.value)"
+        placeholder="Profil">
+        @for (profile of profileService.profiles(); track profile.id) {
+          <mat-option [value]="profile.id">{{ profile.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <a mat-icon-button routerLink="/profiles" aria-label="Profile verwalten">
+      <mat-icon>manage_accounts</mat-icon>
+    </a>
+  </div>
   <nav class="desktop-nav">
     <a mat-button routerLink="/calendar" routerLinkActive="active-link">
       <mat-icon>calendar_month</mat-icon>

@@ -37,7 +37,7 @@ export class Meals {
   readonly ingredients = this.ingredientService.ingredients;
 
   readonly showForm = signal(false);
-  readonly editingId = signal<string | null>(null);
+  readonly editingId = signal<number | null>(null);
   readonly mealName = signal('');
   readonly mealIngredients = signal<MealIngredient[]>([]);
 
@@ -60,7 +60,7 @@ export class Meals {
     return this.mealService.calculateMealMacros(meal);
   }
 
-  getIngredientName(id: string): string {
+  getIngredientName(id: number): string {
     return this.ingredientService.getById(id)?.name ?? 'Unbekannt';
   }
 
@@ -78,7 +78,7 @@ export class Meals {
     this.showForm.set(true);
   }
 
-  addIngredientToMeal(ingredientId: string): void {
+  addIngredientToMeal(ingredientId: number): void {
     if (!ingredientId) return;
     this.mealIngredients.update(list => [...list, { ingredientId, amount: 100 }]);
   }
@@ -110,7 +110,7 @@ export class Meals {
     this.showForm.set(false);
   }
 
-  delete(id: string): void {
+  delete(id: number): void {
     this.mealService.delete(id);
   }
 }

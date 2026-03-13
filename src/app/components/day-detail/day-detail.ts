@@ -62,17 +62,17 @@ export class DayDetail {
     });
   }
 
-  getMealName(mealId: string): string {
+  getMealName(mealId: number): string {
     return this.mealService.getById(mealId)?.name ?? 'Unbekanntes Gericht';
   }
 
-  getMealMacros(mealId: string) {
+  getMealMacros(mealId: number) {
     const meal = this.mealService.getById(mealId);
     if (!meal) return { calories: 0, fat: 0, protein: 0, carbs: 0 };
     return this.mealService.calculateMealMacros(meal);
   }
 
-  addMeal(mealId: string): void {
+  addMeal(mealId: number): void {
     if (!mealId) return;
     this.calendarService.addMealToDay(this.date(), mealId);
   }
