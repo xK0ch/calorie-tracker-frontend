@@ -9,4 +9,11 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /etc/letsencrypt/live/fynn-koch.de-0001/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
       - /etc/letsencrypt/live/fynn-koch.de-0001/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+    networks:
+      - calorie-tracker-net
     restart: unless-stopped
+
+networks:
+  calorie-tracker-net:
+    name: calorie-tracker-net
+    external: true
